@@ -3,3 +3,5 @@
 #for authentication or logging system. (this keeps app.py clean and focused)
 
 from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Your Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%; /* Ensures the HTML and body fill the parent container */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff; /* Switched to a clean white background */
+            color: #333333; /* Dark gray text for contrast on the white background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem 1.5rem;
+            background-color: #1F2937; /* Reverted to the older dark gray for the card */
+            border-radius: 1.5rem; /* Large rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+            animation: fadeIn 0.8s ease-in-out;
+            margin: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .login-container {
+                padding: 3rem 2.5rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #ef4444; /* Focus border is red */
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5); /* Focus shadow is red */
+            transform: scale(1.02);
+        }
+
+        .input-group input {
+            transition: all 0.2s ease;
+            background-color: #374151; /* Dark input background */
+            color: #E5E7EB; /* Light text for input fields */
+        }
+
+        .login-button {
+            transition: all 0.2s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); /* Hover shadow is red */
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h1 class="text-3xl sm:text-4xl font-bold text-center mb-2 text-white">Welcome Back!</h1>
+    <p class="text-center text-gray-400 mb-8 text-sm">Please sign in to continue</p>
+
+    <form id="loginForm" class="space-y-6">
+        <!-- Email Input -->
+        <div class="input-group">
+            <label for="email" class="text-sm font-medium text-gray-400 block mb-2">Email address</label>
+            <input type="email" id="email" name="email" required
+                   class="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all duration-200">
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-group">
+            <label for="password" class="text-sm font-medium text-gray-400 block mb-2">Password</label>
+            <input type="password" id="password" name="password" required
+                   class="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all duration-200">
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="text-right">
+            <a href="#" class="text-sm text-red-500 hover:text-red-400 transition-colors duration-200">Forgot Password?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit"
+                class="login-button w-full px-4 py-3 text-lg font-bold text-white bg-red-600 rounded-lg shadow-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
+            Log In
+        </button>
+    </form>
+    <!-- Message Box for feedback -->
+    <div id="messageBox" class="mt-6 p-4 rounded-lg text-center hidden"></div>
+
+    <!-- Sign Up Link -->
+    <div class="text-center mt-6 text-sm text-gray-400">
+        Don't have an account?
+        <a href="#" class="font-medium text-red-500 hover:text-red-400 transition-colors duration-200">Sign up</a>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const messageBox = document.getElementById('messageBox');
+
+        // Simple validation and simulated response
+        if (email === "" || password === "") {
+            showMessage('Please enter both email and password.', 'error');
+        } else if (email.includes("@")) {
+            showMessage('Login successful! You can now handle this in your Kotlin code.', 'success');
+            // You can add a postMessage() call here to send data to your Kotlin app
+            // For example:
+            // window.parent.postMessage(JSON.stringify({ action: 'login', email: email }), '*');
+        } else {
+            showMessage('Invalid email or password.', 'error');
+        }
+    });
+
+    function showMessage(message, type) {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.textContent = message;
+        messageBox.classList.remove('hidden', 'bg-red-500', 'text-white', 'bg-green-500');
+        if (type === 'success') {
+            messageBox.classList.add('bg-green-500', 'text-white');
+        } else {
+            messageBox.classList.add('bg-red-500', 'text-white');
+        }
+    }
+</script>
+
+</body>
+</html>
