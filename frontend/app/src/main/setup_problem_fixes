@@ -1,0 +1,3 @@
+write this: android:name="com.example.gymapplicationfrontend.MainActivity"
+
+to fix the issue of mainactivity not being found
