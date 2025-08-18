@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Plans - Gym Manager</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body and typography styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(232, 95, 92, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Header styling */
+        .header-card {
+            background-color: #f7fafc;
+            border-radius: 0 0 2rem 2rem;
+            padding: 2rem 1.5rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background-color: #d84943;
+            transform: scale(1.05);
+        }
+
+        /* Plan cards */
+        .plan-card {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: #e85f5c;
+        }
+
+        .plan-card.featured {
+            border-color: #e85f5c;
+        }
+
+        .plan-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: 1rem;
+            right: -2rem;
+            background-color: #e85f5c;
+            color: white;
+            padding: 0.25rem 3rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+            letter-spacing: 1px;
+        }
+
+        .plan-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            color: white;
+        }
+
+        .plan-icon.fat-loss { background-color: #e85f5c; }
+        .plan-icon.maintenance { background-color: #48bb78; }
+        .plan-icon.muscle-gain { background-color: #4299e1; }
+        .plan-icon.personalised { background-color: #9f7aea; }
+
+        .plan-title {
+            color: #f7fafc;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .plan-description {
+            color: #a0aec0;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .plan-feature {
+            color: #f7fafc;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .plan-feature::before {
+            content: '✓';
+            color: #e85f5c;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .select-btn {
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+<!-- Custom message box element for user feedback -->
+<div id="message-box" class="message-box"></div>
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    // Plans data
+    const plansData = [
+        {
+            id: 'fat-loss',
+            title: 'Fat Loss',
+            icon: '🔥',
+            description: 'Transform your body with our scientifically designed fat loss program',
+            features: [
+                'High-intensity cardio workouts',
+                'Strength training for muscle retention',
+                'Nutrition guidance and meal plans',
+                'Progress tracking and monitoring',
+                'Access to all gym equipment'
+            ],
+            popular: false
+        },
+        {
+            id: 'maintenance',
+            title: 'Maintenance',
+            icon: '⚖️',
+            description: 'Maintain your current fitness level with balanced training',
+            features: [
+                'Balanced workout routines',
+                'Flexibility and mobility sessions',
+                'General fitness maintenance',
+                'Access to all facilities',
+                'Basic nutrition guidelines'
+            ],
+            popular: false
+        },
+        {
+            id: 'muscle-gain',
+            title: 'Muscle Gain',
+            icon: '💪',
+            description: 'Build lean muscle mass with our specialized strength program',
+            features: [
+                'Progressive strength training',
+                'Compound movement focus',
+                'Muscle-building nutrition plan',
+                'Recovery and rest guidance',
+                'Premium equipment access'
+            ],
+            popular: true
+        },
+        {
+            id: 'personalised',
+            title: 'Personalised Plan',
+            icon: '⭐',
+            description: 'Custom-tailored program designed specifically for your goals',
+            features: [
+                'One-on-one consultation',
+                'Customized workout plan',
+                'Personal nutrition strategy',
+                'Regular progress assessments',
+                'Priority trainer support'
+            ],
+            popular: false
+        }
+    ];
+
+    // Main membership plans component
+    function MembershipPlans() {
+        const [message, setMessage] = React.useState({ text: '', visible: false });
+
+        // Function to show a temporary message
+        const showMessage = (text, duration = 3000) => {
+            setMessage({ text, visible: true });
+            setTimeout(() => {
+                setMessage(prev => ({ ...prev, visible: false }));
+            }, duration);
+        };
+
+        const handlePlanSelect = (plan) => {
+            showMessage(`Selected ${plan.title} plan! Redirecting...`);
+            // Store selected plan data for the next page
+            const planData = {
+                id: plan.id,
+                title: plan.title,
+                icon: plan.icon,
+                description: plan.description,
+                features: plan.features
+            };
+
+            // Store in memory for demo purposes (in real app, use proper state management)
+            window.selectedPlanData = planData;
+
+            setTimeout(() => {
+                window.location.href = 'select_membership_duration.html';
+            }, 1000);
+        };
+
+        const handleBack = () => {
+            window.history.back();
+        };
+
+        return (
+            <div className="min-h-screen">
+                {message.visible && (
+                    <div className="message-box" style={{ display: 'block' }}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Header */}
+                <div className="header-card fade-in-up">
+                    <button onClick={handleBack} className="back-btn">
+                        ←
+                    </button>
+                    <div className="text-center pt-2">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                            Choose Your Plan
+                        </h1>
+                        <p className="text-gray-600">
+                            Select the perfect fitness program for your goals
+                        </p>
+                    </div>
+                </div>
+
+                {/* Plans Grid */}
+                <div className="pb-8">
+                    {plansData.map((plan, index) => (
+                        <div
+                            key={plan.id}
+                            className={`plan-card fade-in-up stagger-${index + 1} ${plan.popular ? 'featured' : ''}`}
+                            onClick={() => handlePlanSelect(plan)}
+                        >
+                            <div className={`plan-icon ${plan.id}`}>
+                                {plan.icon}
+                            </div>
+                            <h2 className="plan-title">{plan.title}</h2>
+                            <p className="plan-description">{plan.description}</p>
+                            <ul className="plan-features">
+                                {plan.features.map((feature, idx) => (
+                                    <li key={idx} className="plan-feature">{feature}</li>
+                                ))}
+                            </ul>
+                            <button className="select-btn">
+                                Select Plan
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<MembershipPlans />);
+</script>
+</body>
+</html>

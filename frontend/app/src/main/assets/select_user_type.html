@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select User Type</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom back button */
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(232, 95, 92, 0.2);
+        }
+
+        .back-btn:hover {
+            background-color: #d84943;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    function SelectUserTypePage() {
+        // Function to handle button clicks and redirect
+        const handleButtonClick = (userType) => {
+            if (userType === 'Staff') {
+                window.location.href = 'staff_form.html';
+            } else if (userType === 'Manager') {
+                window.location.href = 'manager_form.html';
+            }
+        };
+
+        return (
+            <div className="relative w-full max-w-xl mx-auto p-8 rounded-lg shadow-lg flex flex-col items-center bg-[#2d3748] text-white">
+                {/* Back Button */}
+                <button
+                    onClick={() => window.location.href = 'login.html'}
+                    className="back-btn"
+                >
+                    ←
+                </button>
+
+                {/* Header */}
+                <div className="text-center w-full mb-8 mt-12">
+                    <h1 className="text-4xl font-bold mb-2 text-[#e85f5c]">Select User Type</h1>
+                    <p className="text-gray-300 text-lg">Choose the type of user you want to add.</p>
+                </div>
+
+                {/* Selection Buttons */}
+                <div className="w-full space-y-6">
+                    {/* Staff Button */}
+                    <button
+                        onClick={() => handleButtonClick('Staff')}
+                        className="w-full py-6 rounded-md bg-[#e85f5c] text-white font-bold text-xl shadow-lg hover:bg-[#d84943] transition-all duration-300 transform hover:scale-105 fade-in stagger-1"
+                    >
+                        Staff
+                    </button>
+
+                    {/* Manager Button */}
+                    <button
+                        onClick={() => handleButtonClick('Manager')}
+                        className="w-full py-6 rounded-md bg-[#202020] text-white font-bold text-xl shadow-lg hover:bg-[#2d3748] transition-all duration-300 transform hover:scale-105 fade-in stagger-2"
+                    >
+                        Manager
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<SelectUserTypePage />);
+</script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Duration - Gym Manager</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body and typography styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(232, 95, 92, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Header styling */
+        .header-card {
+            background-color: #f7fafc;
+            border-radius: 0 0 2rem 2rem;
+            padding: 2rem 1.5rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background-color: #d84943;
+            transform: scale(1.05);
+        }
+
+        /* Selected plan display */
+        .selected-plan {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1rem;
+            border: 2px solid #e85f5c;
+            text-align: center;
+        }
+
+        .selected-plan-title {
+            color: #f7fafc;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .selected-plan-subtitle {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Duration cards */
+        .duration-card {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .duration-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            border-color: #e85f5c;
+        }
+
+        .duration-card.popular {
+            border-color: #e85f5c;
+            transform: scale(1.02);
+        }
+
+        .duration-card.popular::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .duration-months {
+            color: #e85f5c;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .duration-label {
+            color: #f7fafc;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .duration-price {
+            color: #f7fafc;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .duration-currency {
+            font-size: 1.2rem;
+            color: #a0aec0;
+        }
+
+        .duration-savings {
+            color: #48bb78;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .duration-features {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .duration-feature {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            padding: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .duration-feature::before {
+            content: '•';
+            color: #e85f5c;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .select-duration-btn {
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-duration-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+<!-- Custom message box element for user feedback -->
+<div id="message-box" class="message-box"></div>
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    // Duration options data with realistic savings and better features
+    const durationOptions = [
+        {
+            months: 1,
+            price: 2599,
+            popular: false,
+            savings: null,
+            features: ['Full gym access', 'Expert trainers at your service', 'Basic nutrition guidance']
+        },
+        {
+            months: 3,
+            price: 3599,
+            popular: false,
+            savings: 'Monsoon Offer - Save ₹800!',
+            features: ['Full gym access', 'Expert trainers at your service', 'Nutrition program', 'Progress tracking']
+        },
+        {
+            months: 6,
+            price: 5599,
+            popular: true,
+            savings: 'Monsoon Offer - Save ₹2500!',
+            features: ['Full gym access', 'Expert trainers at your service', 'Complete nutrition program', 'Progress tracking', 'Body composition analysis']
+        },
+        {
+            months: 9,
+            price: 7599,
+            popular: false,
+            savings: 'Monsoon Offer - Save ₹3200!',
+            features: ['Full gym access', 'Expert trainers at your service', 'Complete nutrition program', 'Progress tracking', 'Weekly trainer check-ins']
+        },
+        {
+            months: 12,
+            price: 10599,
+            popular: false,
+            savings: 'Monsoon Offer - Save ₹4000!',
+            features: ['Full gym access', 'Expert trainers at your service', 'Complete nutrition program', 'Progress tracking', 'Dedicated trainer support']
+        }
+    ];
+
+    // Main membership duration component
+    function MembershipDuration() {
+        const [selectedPlan, setSelectedPlan] = React.useState(null);
+        const [message, setMessage] = React.useState({ text: '', visible: false });
+
+        React.useEffect(() => {
+            // Get selected plan from previous page (fallback to window object for demo)
+            let planData = null;
+
+            // Try to get from window object (set by previous page)
+            if (window.selectedPlanData) {
+                planData = window.selectedPlanData;
+            }
+
+            if (planData) {
+                setSelectedPlan(planData);
+            } else {
+                // Fallback if no plan selected
+                setSelectedPlan({ title: 'Membership Plan', description: 'Choose your duration' });
+            }
+        }, []);
+
+        // Function to show a temporary message
+        const showMessage = (text, duration = 3000) => {
+            setMessage({ text, visible: true });
+            setTimeout(() => {
+                setMessage(prev => ({ ...prev, visible: false }));
+            }, duration);
+        };
+
+        const handleDurationSelect = (duration) => {
+            showMessage(`Selected ${duration.months} month${duration.months > 1 ? 's' : ''} plan for ₹${duration.price.toLocaleString()}! Proceeding to checkout...`);
+
+            // Store complete selection for checkout
+            const completeSelection = {
+                plan: selectedPlan,
+                duration: duration,
+                totalPrice: duration.price
+            };
+
+            // Store in window object for demo purposes
+            window.membershipSelection = completeSelection;
+
+            setTimeout(() => {
+                // Redirect to member dashboard
+                window.location.href = 'member_dashboard.html';
+            }, 1500);
+        };
+
+        const handleBack = () => {
+            window.history.back();
+        };
+
+        const formatDuration = (months) => {
+            if (months === 1) return '1 Month';
+            return `${months} Months`;
+        };
+
+        if (!selectedPlan) {
+            return <div>Loading...</div>;
+        }
+
+        return (
+            <div className="min-h-screen">
+                {message.visible && (
+                    <div className="message-box" style={{ display: 'block' }}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Header */}
+                <div className="header-card fade-in-up">
+                    <button onClick={handleBack} className="back-btn">
+                        ←
+                    </button>
+                    <div className="text-center pt-2">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                            Choose Duration
+                        </h1>
+                        <p className="text-gray-600">
+                            Select your membership period
+                        </p>
+                    </div>
+                </div>
+
+                {/* Selected Plan Display */}
+                <div className="selected-plan fade-in-up">
+                    <div className="selected-plan-title">{selectedPlan.title}</div>
+                    <div className="selected-plan-subtitle">Your selected fitness plan</div>
+                </div>
+
+                {/* Duration Options */}
+                <div className="pb-8">
+                    {durationOptions.map((duration, index) => (
+                        <div
+                            key={duration.months}
+                            className={`duration-card fade-in-up stagger-${index + 1} ${duration.popular ? 'popular' : ''}`}
+                            onClick={() => handleDurationSelect(duration)}
+                        >
+                            <div className="duration-months">{duration.months}</div>
+                            <div className="duration-label">
+                                {formatDuration(duration.months)}
+                            </div>
+                            <div className="duration-price">
+                                <span className="duration-currency">₹</span>
+                                {duration.price.toLocaleString()}
+                            </div>
+                            {duration.savings && (
+                                <div className="duration-savings">
+                                    {duration.savings}
+                                </div>
+                            )}
+                            <ul className="duration-features">
+                                {duration.features.map((feature, idx) => (
+                                    <li key={idx} className="duration-feature">{feature}</li>
+                                ))}
+                            </ul>
+                            <button className="select-duration-btn">
+                                Select {formatDuration(duration.months)}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<MembershipDuration />);
+</script>
+</body>
+</html>

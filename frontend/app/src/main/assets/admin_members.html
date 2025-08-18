@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Gym Manager</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body and typography styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(232, 95, 92, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Header styling */
+        .header-card {
+            background-color: #f7fafc;
+            border-radius: 0 0 2rem 2rem;
+            padding: 2rem 1.5rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Dashboard cards */
+        .dashboard-card {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #e85f5c;
+            line-height: 1;
+        }
+
+        .card-label {
+            color: #f7fafc;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .card-insight {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Navigation bar */
+        .nav-bar {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 0.75rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.75rem 0.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            background-color: #e85f5c;
+            color: white;
+        }
+
+        .nav-item:hover {
+            color: #f7fafc;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Content sections */
+        .content-section {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            color: #f7fafc;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Member list styling */
+        .member-item {
+            background-color: #4a5568;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .member-name {
+            color: #f7fafc;
+            font-weight: 500;
+        }
+
+        .member-detail {
+            color: #a0aec0;
+            font-size: 0.8rem;
+        }
+
+        .member-status {
+            background-color: #e85f5c;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background-color: #4a5568;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .chart-bar {
+            background-color: #e85f5c;
+            height: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            background-color: #4a5568;
+            color: #f7fafc;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .secondary-btn:hover {
+            background-color: #2d3748;
+            transform: translateY(-1px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+<!-- Custom message box element for user feedback -->
+<div id="message-box" class="message-box"></div>
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    // Mock data for demonstration
+    const dashboardData = {
+        todayCheckins: 142,
+        upcomingRenewals: 8,
+        newMembersThisWeek: 12,
+        totalMembers: 847,
+        lowAttendanceMembers: [
+            { name: "Rajesh Kumar", lastSeen: "15 days ago", phone: "+91 98765 43210" },
+            { name: "Priya Sharma", lastSeen: "12 days ago", phone: "+91 87654 32109" },
+            { name: "Amit Patel", lastSeen: "18 days ago", phone: "+91 76543 21098" },
+            { name: "Sneha Reddy", lastSeen: "20 days ago", phone: "+91 65432 10987" },
+        ],
+        popularPlans: [
+            { name: "Fat Loss", count: 45, percentage: 85 },
+            { name: "Muscle Gain", count: 32, percentage: 60 },
+            { name: "Maintenance", count: 28, percentage: 52 },
+            { name: "Personalized Program", count: 15, percentage: 28 },
+        ]
+    };
+
+    // Main dashboard component
+    function AdminDashboard() {
+        const [message, setMessage] = React.useState({ text: '', visible: false });
+
+        // Function to show a temporary message
+        const showMessage = (text, duration = 3000) => {
+            setMessage({ text, visible: true });
+            setTimeout(() => {
+                setMessage(prev => ({ ...prev, visible: false }));
+            }, duration);
+        };
+
+        const handleNavigation = (page) => {
+            showMessage(`Navigating to ${page.replace('_', ' ')}...`);
+            // Redirect to the respective HTML page
+            setTimeout(() => {
+                window.location.href = `${page}.html`;
+            }, 1000);
+        };
+
+        const handleContactMember = (member) => {
+            showMessage(`Opening dialer for ${member.name}...`);
+            // Create a temporary link element and click it to trigger tel: protocol
+            const link = document.createElement('a');
+            link.href = `tel:${member.phone}`;
+            link.click();
+        };
+
+        return (
+            <div className="min-h-screen pb-20">
+                {message.visible && (
+                    <div className="message-box" style={{ display: 'block' }}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Header */}
+                <div className="header-card fade-in-up">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+                            <p className="text-gray-600 text-sm mt-1">Welcome back, Admin</p>
+                        </div>
+                        <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-content-center text-white font-bold text-lg">
+                            A
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dashboard Cards */}
+                <div className="grid grid-cols-2 gap-4 p-4">
+                    <div className="dashboard-card fade-in-up stagger-1">
+                        <div className="card-number">{dashboardData.todayCheckins}</div>
+                        <div className="card-label">Today's Check-ins</div>
+                        <div className="card-insight">Current gym activity</div>
+                    </div>
+                    <div className="dashboard-card fade-in-up stagger-2">
+                        <div className="card-number">{dashboardData.upcomingRenewals}</div>
+                        <div className="card-label">Upcoming Renewals</div>
+                        <div className="card-insight">Next 7 days</div>
+                    </div>
+                    <div className="dashboard-card fade-in-up stagger-3">
+                        <div className="card-number">{dashboardData.newMembersThisWeek}</div>
+                        <div className="card-label">New Members</div>
+                        <div className="card-insight">This week</div>
+                    </div>
+                    <div className="dashboard-card fade-in-up stagger-4">
+                        <div className="card-number">{dashboardData.totalMembers}</div>
+                        <div className="card-label">Total Members</div>
+                        <div className="card-insight">All time</div>
+                    </div>
+                </div>
+
+                {/* Low Attendance Members */}
+                <div className="content-section fade-in-up">
+                    <h2 className="section-title">Members Needing Attention</h2>
+                    <p className="text-gray-400 text-sm mb-4">Members who haven't visited in 2+ weeks</p>
+                    {dashboardData.lowAttendanceMembers.map((member, index) => (
+                        <div key={index} className="member-item">
+                            <div>
+                                <div className="member-name">{member.name}</div>
+                                <div className="member-detail">Last seen: {member.lastSeen}</div>
+                            </div>
+                            <button
+                                onClick={() => handleContactMember(member)}
+                                className="member-status"
+                            >
+                                Contact
+                            </button>
+                        </div>
+                    ))}
+                    <button className="action-btn">View All Members</button>
+                    <button className="secondary-btn">Send Bulk Reminder</button>
+                </div>
+
+                {/* Popular Plans Chart */}
+                <div className="content-section fade-in-up">
+                    <h2 className="section-title">Popular Membership Plans</h2>
+                    <p className="text-gray-400 text-sm mb-4">Based on recent sales this month</p>
+                    <div className="chart-container">
+                        {dashboardData.popularPlans.map((plan, index) => (
+                            <div key={index} className="mb-3">
+                                <div className="flex justify-between text-sm text-gray-300 mb-1">
+                                    <span>{plan.name}</span>
+                                    <span>{plan.count} members</span>
+                                </div>
+                                <div className="w-full bg-gray-600 rounded-full h-2">
+                                    <div
+                                        className="bg-red-500 h-2 rounded-full transition-all duration-1000"
+                                        style={{ width: `${plan.percentage}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="action-btn">Detailed Revenue Report</button>
+                    <button className="secondary-btn">Manage Plans</button>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="content-section fade-in-up">
+                    <h2 className="section-title">Quick Actions</h2>
+                    <div className="flex flex-wrap">
+                        <button
+                            onClick={() => handleNavigation('member_management')}
+                            className="action-btn"
+                        >
+                            Add New Member
+                        </button>
+                        <button
+                            onClick={() => handleNavigation('user_management')}
+                            className="action-btn"
+                        >
+                            Manage Staff
+                        </button>
+                        <button
+                            onClick={() => handleNavigation('plan_management')}
+                            className="secondary-btn"
+                        >
+                            Edit Plans
+                        </button>
+                        <button
+                            onClick={() => handleNavigation('reports')}
+                            className="secondary-btn"
+                        >
+                            Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                {/* Navigation Bar */}
+                <div className="nav-bar">
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('admin_dashboard')}
+                    >
+                        <span className="nav-icon">🏠</span>
+                        Dashboard
+                    </button>
+                    <button className="nav-item active"
+                         onClick={() => handleNavigation('admin_members')}
+                    >
+                        <span className="nav-icon">👥</span>
+                        Members
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('admin_users')}
+                    >
+                        <span className="nav-icon">👤</span>
+                        Users
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('admin_plans')}
+                    >
+                        <span className="nav-icon">💳</span>
+                        Plans
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('admin_reports')}
+                    >
+                        <span className="nav-icon">📊</span>
+                        Reports
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AdminDashboard />);
+</script>
+</body>
+</html>
