@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - Gym Manager</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body and typography styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(232, 95, 92, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Header styling */
+        .header-card {
+            background-color: #f7fafc;
+            border-radius: 0 0 2rem 2rem;
+            padding: 2rem 1.5rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Quick action cards */
+        .action-card {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            margin: 0.75rem 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: #e85f5c;
+        }
+
+        .action-card:active {
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .action-title {
+            color: #f7fafc;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-subtitle {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* User list styling */
+        .user-section {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            color: #f7fafc;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-count {
+            color: #e85f5c;
+            background-color: #4a5568;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* User card styling */
+        .user-card {
+            background-color: #4a5568;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .user-card:hover {
+            background-color: #718096;
+            border-left-color: #e85f5c;
+            transform: translateX(5px);
+        }
+
+        .user-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: #f7fafc;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            color: #a0aec0;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-bottom: 0.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            color: #f7fafc;
+            font-size: 0.85rem;
+        }
+
+        .user-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-active {
+            background-color: #48bb78;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #e85f5c;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #ed8936;
+            color: white;
+        }
+
+        /* Search bar styling */
+        .search-container {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input {
+            background-color: #4a5568;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            color: #f7fafc;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .search-input:focus {
+            background-color: #718096;
+            transform: scale(1.02);
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem;
+        }
+
+        .stat-card {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .stat-number {
+            color: #e85f5c;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: #f7fafc;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .stat-subtitle {
+            color: #a0aec0;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            background-color: #4a5568;
+            color: #f7fafc;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .secondary-btn:hover {
+            background-color: #2d3748;
+            transform: translateY(-1px);
+        }
+
+        /* Navigation bar */
+        .nav-bar {
+            background-color: #2d3748;
+            border-radius: 1.5rem;
+            padding: 0.75rem;
+            margin: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.75rem 0.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            background-color: #e85f5c;
+            color: white;
+        }
+
+        .nav-item:hover {
+            color: #f7fafc;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+<!-- Custom message box element for user feedback -->
+<div id="message-box" class="message-box"></div>
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    // Mock user data
+    const mockUsers = [
+        {
+            id: 1,
+            name: "Rahul Mehta",
+            role: "Manager",
+            email: "rahul.mehta@gym.com",
+            phone: "+91 98765 11111",
+            joinDate: "2023-01-15",
+            status: "active",
+            lastLogin: "2024-08-18",
+            permissions: "Full Access"
+        },
+        {
+            id: 2,
+            name: "Pooja Singh",
+            role: "Staff",
+            email: "pooja.singh@gym.com",
+            phone: "+91 87654 22222",
+            joinDate: "2023-06-20",
+            status: "active",
+            lastLogin: "2024-08-17",
+            permissions: "Member Management"
+        },
+        {
+            id: 3,
+            name: "Karan Joshi",
+            role: "Staff",
+            email: "karan.joshi@gym.com",
+            phone: "+91 76543 33333",
+            joinDate: "2024-02-10",
+            status: "active",
+            lastLogin: "2024-08-18",
+            permissions: "Reception"
+        },
+        {
+            id: 4,
+            name: "Neha Gupta",
+            role: "Manager",
+            email: "neha.gupta@gym.com",
+            phone: "+91 65432 44444",
+            joinDate: "2022-11-05",
+            status: "inactive",
+            lastLogin: "2024-08-10",
+            permissions: "Full Access"
+        },
+        {
+            id: 5,
+            name: "Arjun Kapoor",
+            role: "Staff",
+            email: "arjun.kapoor@gym.com",
+            phone: "+91 98765 55555",
+            joinDate: "2024-08-01",
+            status: "pending",
+            lastLogin: "Never",
+            permissions: "Trainee"
+        }
+    ];
+
+    // Main users management component
+    function AdminUsers() {
+        const [users, setUsers] = React.useState(mockUsers);
+        const [filteredUsers, setFilteredUsers] = React.useState(mockUsers);
+        const [searchTerm, setSearchTerm] = React.useState('');
+        const [selectedUser, setSelectedUser] = React.useState(null);
+        const [message, setMessage] = React.useState({ text: '', visible: false });
+
+        // Function to show a temporary message
+        const showMessage = (text, duration = 3000) => {
+            setMessage({ text, visible: true });
+            setTimeout(() => {
+                setMessage(prev => ({ ...prev, visible: false }));
+            }, duration);
+        };
+
+        // Filter users based on search term
+        React.useEffect(() => {
+            if (searchTerm) {
+                const filtered = users.filter(user =>
+                    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                setFilteredUsers(filtered);
+            } else {
+                setFilteredUsers(users);
+            }
+        }, [searchTerm, users]);
+
+        const handleSearch = (e) => {
+            setSearchTerm(e.target.value);
+        };
+
+        const handleCreateStaff = () => {
+            showMessage('Redirecting to staff registration form...');
+            setTimeout(() => {
+                // window.location.href = 'staff_form.html';
+                console.log('Would redirect to staff_form.html');
+            }, 1000);
+        };
+
+        const handleCreateManager = () => {
+            showMessage('Redirecting to manager registration form...');
+            setTimeout(() => {
+                // window.location.href = 'manager_form.html';
+                console.log('Would redirect to manager_form.html');
+            }, 1000);
+        };
+
+        const handleUserSelect = (user) => {
+            setSelectedUser(selectedUser?.id === user.id ? null : user);
+        };
+
+        const handleContactUser = (user) => {
+            showMessage(`Opening dialer for ${user.name}...`);
+            const link = document.createElement('a');
+            link.href = `tel:${user.phone}`;
+            link.click();
+        };
+
+        const handleEditUser = (user) => {
+            showMessage(`Opening edit form for ${user.name}...`);
+            const formPage = user.role.toLowerCase() === 'manager' ? 'manager_form.html' : 'staff_form.html';
+            setTimeout(() => {
+                console.log(`Would redirect to ${formPage} with user ID: ${user.id}`);
+            }, 1000);
+        };
+
+        const handleNavigation = (page) => {
+            showMessage(`Navigating to ${page.replace('_', ' ')}...`);
+            setTimeout(() => {
+                console.log(`Would navigate to ${page}.html`);
+            }, 1000);
+        };
+
+        const getStatusClass = (status) => {
+            switch (status) {
+                case 'active': return 'status-active';
+                case 'inactive': return 'status-inactive';
+                case 'pending': return 'status-pending';
+                default: return 'status-active';
+            }
+        };
+
+        const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        };
+
+        // Calculate stats
+        const stats = {
+            total: users.length,
+            managers: users.filter(u => u.role === 'Manager').length,
+            staff: users.filter(u => u.role === 'Staff').length,
+            active: users.filter(u => u.status === 'active').length
+        };
+
+        const managers = filteredUsers.filter(u => u.role === 'Manager');
+        const staff = filteredUsers.filter(u => u.role === 'Staff');
+
+        return (
+            <div className="min-h-screen pb-20">
+                {message.visible && (
+                    <div className="message-box" style={{ display: 'block' }}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Header */}
+                <div className="header-card fade-in-up">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
+                            <p className="text-gray-600 text-sm mt-1">Manage staff and managers</p>
+                        </div>
+                        <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            👤
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="stats-grid fade-in-up stagger-1">
+                    <div className="stat-card">
+                        <div className="stat-number">{stats.total}</div>
+                        <div className="stat-label">Total Users</div>
+                        <div className="stat-subtitle">All staff & managers</div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-number">{stats.active}</div>
+                        <div className="stat-label">Active Users</div>
+                        <div className="stat-subtitle">Currently working</div>
+                    </div>
+                </div>
+
+                {/* Quick Action Cards */}
+                <div className="fade-in-up stagger-2">
+                    <div className="action-card pulse-animation" onClick={handleCreateStaff}>
+                        <span className="action-icon">👨‍💼</span>
+                        <div className="action-title">Add New Staff</div>
+                        <div className="action-subtitle">Create a new staff member account with reception and member management access</div>
+                    </div>
+
+                    <div className="action-card pulse-animation" onClick={handleCreateManager}>
+                        <span className="action-icon">🏆</span>
+                        <div className="action-title">Add New Manager</div>
+                        <div className="action-subtitle">Create a new manager account with full system access and administrative privileges</div>
+                    </div>
+                </div>
+
+                {/* Search Section */}
+                <div className="search-container fade-in-up stagger-3">
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search users by name, email, or role..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                    />
+                </div>
+
+                {/* Managers Section */}
+                <div className="user-section fade-in-up stagger-4">
+                    <div className="section-title">
+                        <span>🏆 Managers</span>
+                        <span className="section-count">{managers.length}</span>
+                    </div>
+
+                    {managers.length === 0 ? (
+                        <div className="text-center text-gray-400 py-4">
+                            No managers found matching your search.
+                        </div>
+                    ) : (
+                        managers.map((user) => (
+                            <div
+                                key={user.id}
+                                className="user-card"
+                                onClick={() => handleUserSelect(user)}
+                            >
+                                <div className="user-header">
+                                    <div className="user-info">
+                                        <div className="user-name">{user.name}</div>
+                                        <div className="user-role">{user.role}</div>
+                                    </div>
+                                    <div className={`user-status ${getStatusClass(user.status)}`}>
+                                        {user.status}
+                                    </div>
+                                </div>
+
+                                <div className="user-details">
+                                    <div className="user-detail">
+                                        <div className="detail-label">Email</div>
+                                        <div className="detail-value">{user.email}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Phone</div>
+                                        <div className="detail-value">{user.phone}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Last Login</div>
+                                        <div className="detail-value">{user.lastLogin === 'Never' ? 'Never' : formatDate(user.lastLogin)}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Permissions</div>
+                                        <div className="detail-value">{user.permissions}</div>
+                                    </div>
+                                </div>
+
+                                {selectedUser?.id === user.id && (
+                                    <div className="mt-3">
+                                        <button
+                                            className="action-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleContactUser(user);
+                                            }}
+                                        >
+                                            📞 Call
+                                        </button>
+                                        <button
+                                            className="secondary-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditUser(user);
+                                            }}
+                                        >
+                                            ✏️ Edit
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Staff Section */}
+                <div className="user-section fade-in-up">
+                    <div className="section-title">
+                        <span>👨‍💼 Staff Members</span>
+                        <span className="section-count">{staff.length}</span>
+                    </div>
+
+                    {staff.length === 0 ? (
+                        <div className="text-center text-gray-400 py-4">
+                            No staff members found matching your search.
+                        </div>
+                    ) : (
+                        staff.map((user) => (
+                            <div
+                                key={user.id}
+                                className="user-card"
+                                onClick={() => handleUserSelect(user)}
+                            >
+                                <div className="user-header">
+                                    <div className="user-info">
+                                        <div className="user-name">{user.name}</div>
+                                        <div className="user-role">{user.role}</div>
+                                    </div>
+                                    <div className={`user-status ${getStatusClass(user.status)}`}>
+                                        {user.status}
+                                    </div>
+                                </div>
+
+                                <div className="user-details">
+                                    <div className="user-detail">
+                                        <div className="detail-label">Email</div>
+                                        <div className="detail-value">{user.email}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Phone</div>
+                                        <div className="detail-value">{user.phone}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Last Login</div>
+                                        <div className="detail-value">{user.lastLogin === 'Never' ? 'Never' : formatDate(user.lastLogin)}</div>
+                                    </div>
+                                    <div className="user-detail">
+                                        <div className="detail-label">Permissions</div>
+                                        <div className="detail-value">{user.permissions}</div>
+                                    </div>
+                                </div>
+
+                                {selectedUser?.id === user.id && (
+                                    <div className="mt-3">
+                                        <button
+                                            className="action-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleContactUser(user);
+                                            }}
+                                        >
+                                            📞 Call
+                                        </button>
+                                        <button
+                                            className="secondary-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditUser(user);
+                                            }}
+                                        >
+                                            ✏️ Edit
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Navigation Bar */}
+                <div className="nav-bar">
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('dashboard')}
+                    >
+                        <span className="nav-icon">🏠</span>
+                        Dashboard
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('member_management')}
+                    >
+                        <span className="nav-icon">👥</span>
+                        Members
+                    </button>
+                    <button className="nav-item active">
+                        <span className="nav-icon">👤</span>
+                        Users
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('plan_management')}
+                    >
+                        <span className="nav-icon">💳</span>
+                        Plans
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => handleNavigation('reports')}
+                    >
+                        <span className="nav-icon">📊</span>
+                        Reports
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AdminUsers />);
+</script>
+</body>
+</html>

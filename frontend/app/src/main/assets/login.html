@@ -3,160 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login to Your Account</title>
+    <title>Gym Login</title>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            height: 100%; /* Ensures the HTML and body fill the parent container */
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #ffffff; /* Switched to a clean white background */
-            color: #333333; /* Dark gray text for contrast on the white background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 2.5rem 1.5rem;
-            background-color: #1F2937; /* Reverted to the older dark gray for the card */
-            border-radius: 1.5rem; /* Large rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 10;
-            animation: fadeIn 0.8s ease-in-out;
-            margin: 1rem;
-        }
-
-        @media (min-width: 640px) {
-            .login-container {
-                padding: 3rem 2.5rem;
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #ef4444; /* Focus border is red */
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5); /* Focus shadow is red */
-            transform: scale(1.02);
-        }
-
-        .input-group input {
-            transition: all 0.2s ease;
-            background-color: #374151; /* Dark input background */
-            color: #E5E7EB; /* Light text for input fields */
-        }
-
-        .login-button {
-            transition: all 0.2s ease;
-        }
-
-        .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); /* Hover shadow is red */
-        }
-
-        .login-button:active {
-            transform: translateY(0);
-            box-shadow: none;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-[#202020] min-h-screen flex items-center justify-center p-4">
 
-<div class="login-container">
-    <h1 class="text-3xl sm:text-4xl font-bold text-center mb-2 text-white">Welcome Back!</h1>
-    <p class="text-center text-gray-400 mb-8 text-sm">Please sign in to continue</p>
+<!-- Root container for the React application -->
+<div id="root"></div>
 
-    <form id="loginForm" class="space-y-6">
-        <!-- Email Input -->
-        <div class="input-group">
-            <label for="email" class="text-sm font-medium text-gray-400 block mb-2">Email address</label>
-            <input type="email" id="email" name="email" required
-                   class="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all duration-200">
-        </div>
+<script type="text/babel">
+    // Define the main App component
+    function App() {
+        // State for form inputs
+        const [email, setEmail] = React.useState('');
+        const [password, setPassword] = React.useState('');
 
-        <!-- Password Input -->
-        <div class="input-group">
-            <label for="password" class="text-sm font-medium text-gray-400 block mb-2">Password</label>
-            <input type="password" id="password" name="password" required
-                   class="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all duration-200">
-        </div>
+        // A custom CSS class to apply a dulling filter to the background image
+        const dullImageStyle = {
+            filter: 'grayscale(60%) contrast(120%) brightness(50%)'
+        };
 
-        <!-- Forgot Password Link -->
-        <div class="text-right">
-            <a href="#" class="text-sm text-red-500 hover:text-red-400 transition-colors duration-200">Forgot Password?</a>
-        </div>
+        // Handle the navigation with a smooth transition
+        const handleSignUpClick = (e) => {
+            e.preventDefault(); // Stop the link from redirecting immediately
 
-        <!-- Login Button -->
-        <button type="submit"
-                class="login-button w-full px-4 py-3 text-lg font-bold text-white bg-red-600 rounded-lg shadow-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
-            Log In
-        </button>
-    </form>
-    <!-- Message Box for feedback -->
-    <div id="messageBox" class="mt-6 p-4 rounded-lg text-center hidden"></div>
+            const mainContainer = document.getElementById('main-container');
+            if (mainContainer) {
+                // Add the class to start the animation
+                mainContainer.classList.add('animate-shrink-out');
 
-    <!-- Sign Up Link -->
-    <div class="text-center mt-6 text-sm text-gray-400">
-        Don't have an account?
-        <a href="#" class="font-medium text-red-500 hover:text-red-400 transition-colors duration-200">Sign up</a>
-    </div>
+                // Wait for the animation to finish before redirecting
+                setTimeout(() => {
+                    window.location.href = 'member_form.html';
+                }, 500); // The time should match the animation duration
+            }
+        };
 
-</div>
+        // Handle login logic
+        const handleLogin = (e) => {
+            e.preventDefault(); // Prevent the form from submitting normally
 
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
+            // Check for the specific admin credentials
+            if (email === 'shreenathsir@gmail.com' && password === '12345') {
+                // Redirect to the admin dashboard for the correct credentials
+                window.location.href = 'admin_dashboard.html';
+            } else {
+                // Redirect to the member dashboard for any other credentials
+                window.location.href = 'member_dashboard.html';
+            }
+        };
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const messageBox = document.getElementById('messageBox');
+        return (
+            <>
+                {/* Inject the CSS for the animation */}
+                <style dangerouslySetInnerHTML={{ __html: `
+                    @keyframes fadeInScale {
+                        from {
+                            opacity: 0;
+                            transform: scale(0.95);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: scale(1);
+                        }
+                    }
 
-        // Simple validation and simulated response
-        if (email === "" || password === "") {
-            showMessage('Please enter both email and password.', 'error');
-        } else if (email.includes("@")) {
-            showMessage('Login successful! You can now handle this in your Kotlin code.', 'success');
-            // You can add a postMessage() call here to send data to your Kotlin app
-            // For example:
-            // window.parent.postMessage(JSON.stringify({ action: 'login', email: email }), '*');
-        } else {
-            showMessage('Invalid email or password.', 'error');
-        }
-    });
+                    .fade-in-scale {
+                        animation: fadeInScale 0.6s ease-out forwards;
+                    }
 
-    function showMessage(message, type) {
-        const messageBox = document.getElementById('messageBox');
-        messageBox.textContent = message;
-        messageBox.classList.remove('hidden', 'bg-red-500', 'text-white', 'bg-green-500');
-        if (type === 'success') {
-            messageBox.classList.add('bg-green-500', 'text-white');
-        } else {
-            messageBox.classList.add('bg-red-500', 'text-white');
-        }
+                    @keyframes shrinkAndSlideOut {
+                        0% {
+                            transform: scale(1) translateX(0);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: scale(0.9) translateX(-100%);
+                            opacity: 0;
+                        }
+                    }
+
+                    .animate-shrink-out {
+                        animation: shrinkAndSlideOut 0.5s ease-in-out forwards;
+                    }
+                `}} />
+
+                {/* Background image container. This is a separate, fixed element so it doesn't disrupt the layout. */}
+                <div
+                    className="fixed inset-0 z-0 bg-cover bg-center"
+                    style={{
+                        backgroundImage: `url('login_page_body_builder.jpg')`,
+                        ...dullImageStyle // Apply the dulling filter style
+                    }}
+                ></div>
+
+                {/* Main content container with the login form, positioned on top of the background. */}
+                <div
+                    id="main-container" // New ID for JavaScript targeting
+                    className="relative z-10 w-full max-w-md p-8 rounded-xl shadow-lg fade-in-scale flex flex-col items-center bg-[#202020] bg-opacity-75"
+                >
+                    {/* New concentric red circle container */}
+                    <div className="w-[10rem] h-[10rem] bg-[#e85f5c] rounded-full flex items-center justify-center mb-8">
+                        {/* Circular Logo Container (the inner white circle) */}
+                        <div className="w-[7.5rem] h-[7.5rem] bg-white rounded-full flex items-center justify-center overflow-hidden">
+                            {/* The gym brand logo is placed here. */}
+                            <img
+                                src="logo.jpg"
+                                alt="The JustLift Gym Logo"
+                                className="w-full h-full object-cover rounded-full"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Login form title and tagline */}
+                    <h1 className="text-4xl font-extrabold mb-1 text-center text-white">The JustLift Gym</h1>
+                    <p className="text-sm font-medium text-gray-400 mb-6 text-center">Your journey to greatness starts here.</p>
+
+                    {/* A clean divider line */}
+                    <hr className="w-1/2 border-gray-600 mb-8" />
+
+                    {/* Login form inputs */}
+                    <form onSubmit={handleLogin} className="w-full">
+                        <div className="mb-5">
+                            <input
+                                type="text"
+                                id="email"
+                                name="email"
+                                placeholder="Email or Username"
+                                className="w-full p-5 rounded-lg bg-[#202020] text-white placeholder-gray-500 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e85f5c] transition-colors duration-200"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="mb-8">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Password"
+                                className="w-full p-5 rounded-lg bg-[#202020] text-white placeholder-gray-500 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e85f5c] transition-colors duration-200"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        {/* Login Button */}
+                        <button
+                            type="submit"
+                            className="w-full py-5 bg-[#e85f5c] text-white font-bold text-lg rounded-lg shadow-lg hover:bg-[#e85f5c]/90 transition-all duration-300 transform hover:scale-105"
+                        >
+                            Log In
+                        </button>
+                    </form>
+
+                    {/* Sign up section with a divider */}
+                    <div className="text-center mt-8 w-full flex flex-col items-center">
+                        <hr className="w-1/2 border-gray-600 mb-4" />
+                        <p className="text-gray-400">If you are not a JustLifter yet, <a href="member_form.html" id="signup-link" onClick={handleSignUpClick} className="text-[#e85f5c] hover:underline">sign up!</a></p>
+                    </div>
+                </div>
+            </>
+        );
     }
+
+    // Render the App component to the root element
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
 </script>
 
 </body>

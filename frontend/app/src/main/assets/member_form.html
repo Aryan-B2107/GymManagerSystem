@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Sign-up</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the component-based UI -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body and typography styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e85f5c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(232, 95, 92, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Modern form element styling */
+        .modern-input, textarea.modern-input {
+            background: #f7fafc;
+            border: 2px solid transparent;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modern-input::placeholder, textarea.modern-input::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+
+        .modern-input:focus, textarea.modern-input:focus {
+            outline: none;
+            border-color: #e85f5c;
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(232, 95, 92, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .modern-select {
+            background: #f7fafc;
+            border: 2px solid transparent;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .modern-select:focus {
+            outline: none;
+            border-color: #e85f5c;
+            box-shadow: 0 8px 25px rgba(232, 95, 92, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .modern-label {
+            color: #f7fafc;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .submit-btn {
+            background-color: #e85f5c;
+            border: none;
+            border-radius: 2rem;
+            padding: 1.25rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(232, 95, 92, 0.3);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(232, 95, 92, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .camera-btn {
+            background-color: #e85f5c;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 1.2rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(232, 95, 92, 0.3);
+            width: 100%;
+        }
+
+        .camera-btn:hover {
+            background-color: #d84943;
+            transform: translateY(-1px);
+            box-shadow: 12px 30px rgba(232, 95, 92, 0.4);
+        }
+
+        .secondary-btn {
+            background-color: #4a5568;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 0.9rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background-color: #2d3748;
+            transform: translateY(-1px);
+        }
+
+        .form-card {
+            background-color: #2d3748;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .header-card {
+            background-color: #f7fafc;
+            border-radius: 0 0 3rem 3rem;
+            padding: 3rem 2rem 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-circle {
+            width: 4rem;
+            height: 4rem;
+            background-color: #e85f5c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 25px rgba(232, 95, 92, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .stagger-6 { animation-delay: 0.6s; }
+
+        .back-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e85f5c;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background-color: #d84943;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<!-- Custom message box element for user feedback -->
+<div id="message-box" class="message-box"></div>
+
+<!-- Root container for the React application -->
+<div id="root"></div>
+
+<script type="text/babel">
+    // Configuration for the form fields
+    const formConfig = {
+        title: "Join as a Member",
+        subtitle: "Sign up and start your fitness journey today",
+        inputs: [
+  {
+    "label": "Full Name",
+    "type": "text",
+    "name": "full_name",
+    "placeholder": "The member's complete legal name"
+  },
+  {
+    "label": "Email Address",
+    "type": "email",
+    "name": "email_address",
+    "placeholder": "For login and communication"
+  },
+  {
+    "label": "Password",
+    "type": "password",
+    "name": "password",
+    "placeholder": "For security"
+  },
+  {
+    "label": "Phone Number",
+    "type": "tel",
+    "name": "phone_number",
+    "placeholder": "A direct contact number"
+  },
+  {
+    "label": "Locality",
+    "type": "select",
+    "name": "locality",
+    "placeholder": "Select your neighborhood or area",
+    "options": [
+        "Sarang",
+        "Madhuvanti",
+        "Shubhakalyan",
+        "Asawari",
+        "Lalit",
+        "Mangal Bhairav",
+        "Sargam",
+        "Pancham",
+        "Sur",
+        "Rythem"
+    ]
+  },
+  {
+    "label": "Date of Birth",
+    "type": "date",
+    "name": "date_of_birth"
+  },
+  {
+    "label": "Emergency Contact Name",
+    "type": "text",
+    "name": "emergency_contact_name",
+    "placeholder": "For use in a medical situation"
+  },
+  {
+    "label": "Emergency Contact Phone Number",
+    "type": "tel",
+    "name": "emergency_contact_phone",
+    "placeholder": "The phone number for the emergency contact"
+  },
+  {
+    "label": "Medical Conditions/Disclaimers",
+    "type": "textarea",
+    "name": "medical_disclaimers",
+    "placeholder": "Note any relevant health information or allergies, for safety"
+  },
+  {
+    "label": "Profile Photo",
+    "type": "camera",
+    "name": "profile_photo_url"
+  },
+  {
+    "label": "Aadhaar Card Photo",
+    "type": "camera",
+    "name": "aadhaar_card_photo_url"
+  }
+]
+
+
+
+    };
+
+    // Main form component
+    function DynamicForm({ config }) {
+        const [capturedImage, setCapturedImage] = React.useState(null);
+        const videoRef = React.useRef(null);
+        const canvasRef = React.useRef(null);
+        const [isCameraActive, setIsCameraActive] = React.useState(false);
+        const [stream, setStream] = React.useState(null);
+        const [message, setMessage] = React.useState({ text: '', visible: false });
+
+        // Function to show a temporary message
+        const showMessage = (text, duration = 3000) => {
+            setMessage({ text, visible: true });
+            setTimeout(() => {
+                setMessage(prev => ({ ...prev, visible: false }));
+            }, duration);
+        };
+
+        const startCamera = async () => {
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                videoRef.current.srcObject = mediaStream;
+                setStream(mediaStream);
+                setIsCameraActive(true);
+            } catch (err) {
+                console.error("Error accessing the camera: ", err);
+                showMessage("Unable to access camera. Please check your permissions.");
+            }
+        };
+
+        const stopCamera = () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            setIsCameraActive(false);
+        };
+
+        const takePhoto = () => {
+            if (videoRef.current && canvasRef.current) {
+                const context = canvasRef.current.getContext('2d');
+                canvasRef.current.width = videoRef.current.videoWidth;
+                canvasRef.current.height = videoRef.current.videoHeight;
+                context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+                const imageDataUrl = canvasRef.current.toDataURL('image/jpeg');
+                setCapturedImage(imageDataUrl);
+                stopCamera();
+                showMessage("Photo captured successfully!");
+            }
+        };
+
+        const renderField = (field, index) => {
+            switch (field.type) {
+                case "text":
+                case "password":
+                case "email":
+                case "tel":
+                    return (
+                        <input
+                            key={field.name}
+                            type={field.type}
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            className="modern-input"
+                            required
+                        />
+                    );
+                case "date":
+                    return (
+                        <input
+                            key={field.name}
+                            type="date"
+                            name={field.name}
+                            className="modern-input"
+                            required
+                        />
+                    );
+                case "textarea":
+                    return (
+                        <textarea
+                            key={field.name}
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            className="modern-input"
+                            rows="4"
+                            style={{ resize: 'vertical', minHeight: '120px' }}
+                            required
+                        />
+                    );
+                case "select":
+                    return (
+                        <select
+                            key={field.name}
+                            name={field.name}
+                            className="modern-select"
+                            required
+                        >
+                            <option value="" disabled selected style={{color: '#a0aec0'}}>{field.placeholder}</option>
+                            {field.options.map((option, idx) => (
+                                <option key={idx} value={option}>{option}</option>
+                            ))}
+                        </select>
+                    );
+                case "camera":
+                    return (
+                        <div key={field.name} className="flex flex-col items-center space-y-4">
+                            {capturedImage ? (
+                                <div className="w-full space-y-4">
+                                    <div className="relative">
+                                        <img
+                                            src={capturedImage}
+                                            alt="Profile Photo"
+                                            className="w-full max-w-xs mx-auto rounded-2xl shadow-lg"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCapturedImage(null)}
+                                        className="secondary-btn mx-auto block"
+                                    >
+                                        Retake Photo
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    {isCameraActive ? (
+                                        <div className="w-full space-y-4">
+                                            <video
+                                                ref={videoRef}
+                                                className="w-full max-w-xs mx-auto rounded-2xl bg-gray-800"
+                                                autoPlay
+                                                playsInline
+                                            />
+                                            <div className="flex space-x-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={takePhoto}
+                                                    className="camera-btn flex-1"
+                                                >
+                                                    Take Photo
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={stopCamera}
+                                                    className="secondary-btn flex-1"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={startCamera}
+                                            className="camera-btn text-lg"
+                                        >
+                                            Open Camera
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    );
+                default:
+                    return null;
+            }
+        };
+
+        const handleSubmit = (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            if (capturedImage) {
+                data.photo = capturedImage;
+            }
+
+            console.log("Form data to send to server:", data);
+            showMessage("Form submitted successfully! Redirecting...");
+
+            // Redirect to the dashboard page after a short delay
+            setTimeout(() => {
+                window.location.href = 'select_membership_plan.html';
+            }, 1500); // 1.5 seconds delay to show the success message
+        };
+
+        return (
+            <div className="min-h-screen">
+                {message.visible && (
+                    <div className="message-box" style={{ display: 'block' }}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Header Card */}
+                <div className="header-card fade-in-up">
+                    <button
+                        onClick={() => window.location.href = 'select_user_type.html'}
+                        className="back-btn"
+                    >
+                        ←
+                    </button>
+                    <div className="logo-circle">
+                        JL
+                    </div>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-3">
+                        {config.title}
+                    </h1>
+                    <p className="text-gray-600 text-base">
+                        {config.subtitle}
+                    </p>
+                </div>
+
+                {/* Form Container */}
+                <div className="px-4 pb-8 space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {config.inputs.map((field, index) => (
+                            <div key={field.name} className={`form-card fade-in-up stagger-${index + 1}`}>
+                                <label className="modern-label">{field.label}</label>
+                                {renderField(field, index)}
+                            </div>
+                        ))}
+
+                        <div className="px-4 pt-4 fade-in-up stagger-6">
+                            <button type="submit" className="submit-btn">
+                                Sign Up
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    // Render the component
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<DynamicForm config={formConfig} />);
+</script>
+</body>
+</html>

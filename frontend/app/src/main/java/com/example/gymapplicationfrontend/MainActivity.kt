@@ -81,7 +81,7 @@ fun HtmlWebView() {
                 // Load the HTML file from the 'assets' directory.
                 // The 'file:///android_asset/' prefix is a special URI for Android assets.
                 // This line points directly to the login.html file.
-                loadUrl("file:///android_asset/login.html")
+                loadUrl("file:///android_asset/admin_dashboard.html")
             }
         },
         update = { webView ->
